@@ -22,16 +22,16 @@ https://github.com/Malvika1905/Synchire
 
 ## Screenshots
 ### Dashboard
-![Dashboard](./screenshots/Dashboard.png)
+![Dashboard](./screenshots/Dashboard.png.png)
 
 ### Students
-![Students](./screenshots/Students.png)
+![Students](./screenshots/Students.png.png)
 
 ### Companies
-![Companies](./screenshots/Companies.png)
+![Companies](./screenshots/Companies.png.png)
 
 ### Scheduler
-![Scheduler](./screenshots/Scheduler.png)
+![Scheduler](./screenshots/Scheduler.png.png)
 
 ## Future Improvements
 - Authentication
