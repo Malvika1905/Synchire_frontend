@@ -17,8 +17,6 @@ function Companies() {
     required_skills: ""
   });
 
-  console.log("BASE_URL:", BASE_URL);
-
   // =========================
   // FETCH COMPANIES
   // =========================
@@ -27,8 +25,6 @@ function Companies() {
       setLoading(true);
 
       const res = await axios.get(`${BASE_URL}/api/companies`);
-
-      console.log("FETCH RESPONSE:", res.data);
 
       if (res.data.success) {
         setCompanies(res.data.data || []);
@@ -65,11 +61,7 @@ function Companies() {
           : []
       });
 
-      console.log("ADD RESPONSE:", res.data);
-
       if (res.data.success) {
-        alert("Company added ✅");
-
         setForm({
           name: "",
           industry: "",
@@ -83,12 +75,10 @@ function Companies() {
       }
     } catch (err) {
       console.log("ADD ERROR:", err);
-
-      const msg =
+      alert(
         err.response?.data?.message ||
-        "Server error while adding company";
-
-      alert(msg);
+          "Server error while adding company"
+      );
     }
   };
 
@@ -103,28 +93,26 @@ function Companies() {
         `${BASE_URL}/api/companies/${id}`
       );
 
-      console.log("DELETE RESPONSE:", res.data);
-
       if (res.data.success) {
-        alert("Company deleted ✅");
         fetchCompanies();
       } else {
         alert(res.data.message || "Delete failed");
       }
     } catch (err) {
       console.log("DELETE ERROR:", err);
-
-      const msg =
+      alert(
         err.response?.data?.message ||
-        "Server error while deleting company";
-
-      alert(msg);
+          "Server error while deleting company"
+      );
     }
   };
 
+  // =========================
+  // UI
+  // =========================
   return (
-    <div style={{ marginTop: "20px", color: "white" }}>
-      <h2>🏢 Companies</h2>
+    <div style={container}>
+      <h2 style={title}>🏢 Companies</h2>
 
       {/* FORM */}
       <div style={formContainer}>
@@ -177,66 +165,84 @@ function Companies() {
 
       {/* LIST */}
       {loading ? (
-        <p style={{ color: "#aaa" }}>Loading...</p>
+        <p style={infoText}>Loading...</p>
       ) : companies.length === 0 ? (
-        <p style={{ color: "#aaa" }}>No companies found.</p>
+        <p style={infoText}>No companies found.</p>
       ) : (
-        companies.map((c) => (
-          <div key={c.company_id} style={cardStyle}>
-            <p><strong>{c.name}</strong></p>
-            <p>{c.industry}</p>
-            <p>Priority: {c.interview_priority}</p>
+        <div style={grid}>
+          {companies.map((c) => (
+            <div key={c.company_id} style={cardStyle}>
+              <strong style={nameStyle}>{c.name}</strong>
 
-            <p>
-              Skills:{" "}
-              {Array.isArray(c.required_skills)
-                ? c.required_skills.join(", ")
-                : ""}
-            </p>
+              <p style={industryStyle}>{c.industry}</p>
 
-            <button
-              onClick={() => deleteCompany(c.company_id)}
-              style={deleteBtn}
-            >
-              Delete
-            </button>
-          </div>
-        ))
+              <p style={priorityStyle}>
+                Priority: {c.interview_priority}
+              </p>
+
+              <p style={skillsStyle}>
+                {Array.isArray(c.required_skills)
+                  ? c.required_skills.join(", ")
+                  : "-"}
+              </p>
+
+              <button
+                onClick={() =>
+                  deleteCompany(c.company_id)
+                }
+                style={deleteBtn}
+              >
+                Delete
+              </button>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
 }
 
 // =========================
-// STYLES
+// STYLES (Aligned with Students UI)
 // =========================
+
+const container = {
+  padding: "20px",
+  color: "white"
+};
+
+const title = {
+  marginBottom: "15px"
+};
 
 const formContainer = {
   display: "flex",
   gap: "10px",
   flexWrap: "wrap",
-  marginBottom: "20px"
+  marginBottom: "25px"
 };
 
 const inputStyle = {
-  padding: "8px",
-  borderRadius: "5px",
-  border: "1px solid #444",
-  backgroundColor: "#121212",
-  color: "white"
+  padding: "10px",
+  borderRadius: "6px",
+  border: "1px solid #333",
+  backgroundColor: "#111",
+  color: "white",
+  minWidth: "180px"
 };
 
 const addBtn = {
   backgroundColor: "#00c853",
   color: "white",
   border: "none",
-  padding: "8px 12px",
-  borderRadius: "5px",
-  cursor: "pointer"
+  padding: "10px 14px",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontWeight: "bold"
 };
 
 const deleteBtn = {
-  marginTop: "8px",
+  marginTop: "10px",
   backgroundColor: "#d32f2f",
   color: "white",
   border: "none",
@@ -245,12 +251,43 @@ const deleteBtn = {
   cursor: "pointer"
 };
 
+const grid = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+  gap: "15px"
+};
+
 const cardStyle = {
-  border: "1px solid #444",
-  padding: "12px",
-  margin: "10px 0",
-  borderRadius: "8px",
-  backgroundColor: "#1e1e1e"
+  border: "1px solid #333",
+  padding: "15px",
+  borderRadius: "10px",
+  backgroundColor: "#1a1a1a",
+  transition: "0.2s"
+};
+
+const nameStyle = {
+  fontSize: "16px"
+};
+
+const industryStyle = {
+  color: "#aaa",
+  fontSize: "13px"
+};
+
+const priorityStyle = {
+  marginTop: "5px",
+  fontSize: "13px",
+  color: "#ccc"
+};
+
+const skillsStyle = {
+  marginTop: "8px",
+  color: "#bbb",
+  fontSize: "13px"
+};
+
+const infoText = {
+  color: "#aaa"
 };
 
 export default Companies;
