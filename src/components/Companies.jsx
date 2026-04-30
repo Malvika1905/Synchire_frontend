@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+// ✅ ENV + FALLBACK
+const BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://synchire-backend-2hdm.onrender.com";
+
 function Companies() {
   const [companies, setCompanies] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -11,66 +17,117 @@ function Companies() {
     required_skills: ""
   });
 
-  const fetchCompanies = () => {
-    axios
-      .get("http://localhost:5000/api/companies")
-      .then((res) => {
-        setCompanies(Array.isArray(res.data.data) ? res.data.data : []);
-      })
-      .catch((err) => console.log(err));
+  console.log("BASE_URL:", BASE_URL);
+
+  // =========================
+  // FETCH COMPANIES
+  // =========================
+  const fetchCompanies = async () => {
+    try {
+      setLoading(true);
+
+      const res = await axios.get(`${BASE_URL}/api/companies`);
+
+      console.log("FETCH RESPONSE:", res.data);
+
+      if (res.data.success) {
+        setCompanies(res.data.data || []);
+      } else {
+        setCompanies([]);
+      }
+    } catch (err) {
+      console.log("FETCH ERROR:", err);
+      setCompanies([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchCompanies();
   }, []);
 
-  const addCompany = () => {
-    if (!form.name) {
-      alert("Company name required");
+  // =========================
+  // ADD COMPANY
+  // =========================
+  const addCompany = async () => {
+    if (!form.name || !form.industry) {
+      alert("Name and Industry required");
       return;
     }
 
-    axios
-      .post("http://localhost:5000/api/companies", {
+    try {
+      const res = await axios.post(`${BASE_URL}/api/companies`, {
         ...form,
-        interview_priority: Number(form.interview_priority) || 0,
+        interview_priority: Number(form.interview_priority) || 1,
         required_skills: form.required_skills
           ? form.required_skills.split(",").map((s) => s.trim())
           : []
-      })
-      .then(() => {
+      });
+
+      console.log("ADD RESPONSE:", res.data);
+
+      if (res.data.success) {
+        alert("Company added ✅");
+
         setForm({
           name: "",
           industry: "",
           interview_priority: "",
           required_skills: ""
         });
+
         fetchCompanies();
-      })
-      .catch((err) => console.log(err));
+      } else {
+        alert(res.data.message || "Failed to add company");
+      }
+    } catch (err) {
+      console.log("ADD ERROR:", err);
+
+      const msg =
+        err.response?.data?.message ||
+        "Server error while adding company";
+
+      alert(msg);
+    }
   };
 
-  const deleteCompany = (id) => {
+  // =========================
+  // DELETE COMPANY
+  // =========================
+  const deleteCompany = async (id) => {
     if (!window.confirm("Delete this company?")) return;
 
-    axios
-      .delete(`http://localhost:5000/api/companies/${id}`)
-      .then(() => fetchCompanies())
-      .catch((err) => console.log(err));
+    try {
+      const res = await axios.delete(
+        `${BASE_URL}/api/companies/${id}`
+      );
+
+      console.log("DELETE RESPONSE:", res.data);
+
+      if (res.data.success) {
+        alert("Company deleted ✅");
+        fetchCompanies();
+      } else {
+        alert(res.data.message || "Delete failed");
+      }
+    } catch (err) {
+      console.log("DELETE ERROR:", err);
+
+      const msg =
+        err.response?.data?.message ||
+        "Server error while deleting company";
+
+      alert(msg);
+    }
   };
 
   return (
     <div style={{ marginTop: "20px", color: "white" }}>
       <h2>🏢 Companies</h2>
 
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          flexWrap: "wrap",
-          marginBottom: "20px"
-        }}
-      >
+      {/* FORM */}
+      <div style={formContainer}>
         <input
           style={inputStyle}
           placeholder="Name"
@@ -118,23 +175,18 @@ function Companies() {
         </button>
       </div>
 
-      {companies.length === 0 ? (
-        <p>No companies found.</p>
+      {/* LIST */}
+      {loading ? (
+        <p style={{ color: "#aaa" }}>Loading...</p>
+      ) : companies.length === 0 ? (
+        <p style={{ color: "#aaa" }}>No companies found.</p>
       ) : (
         companies.map((c) => (
-          <div
-            key={c.company_id}
-            style={{
-              border: "1px solid #444",
-              padding: "12px",
-              margin: "10px 0",
-              borderRadius: "8px",
-              backgroundColor: "#1e1e1e"
-            }}
-          >
+          <div key={c.company_id} style={cardStyle}>
             <p><strong>{c.name}</strong></p>
             <p>{c.industry}</p>
             <p>Priority: {c.interview_priority}</p>
+
             <p>
               Skills:{" "}
               {Array.isArray(c.required_skills)
@@ -155,7 +207,17 @@ function Companies() {
   );
 }
 
-/* STYLES */
+// =========================
+// STYLES
+// =========================
+
+const formContainer = {
+  display: "flex",
+  gap: "10px",
+  flexWrap: "wrap",
+  marginBottom: "20px"
+};
+
 const inputStyle = {
   padding: "8px",
   borderRadius: "5px",
@@ -181,6 +243,14 @@ const deleteBtn = {
   padding: "6px 10px",
   borderRadius: "5px",
   cursor: "pointer"
+};
+
+const cardStyle = {
+  border: "1px solid #444",
+  padding: "12px",
+  margin: "10px 0",
+  borderRadius: "8px",
+  backgroundColor: "#1e1e1e"
 };
 
 export default Companies;
