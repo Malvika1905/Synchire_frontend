@@ -1,16 +1,39 @@
-# React + Vite
+# Synchire 🚀
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interview Scheduling System
 
-Currently, two official plugins are available:
+## Live Demo
+https://vercel.com/malvikasaxena2005-5651s-projects/synchire-frontend/6nKtbLZ1i3M2Z7aKjbkRkuhbJgxe
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
+- Student management (CRUD)
+- Company management (CRUD)
+- Smart interview schedule generator
+- Dashboard with stats
 
-## React Compiler
+## Tech Stack
+- Frontend: React (Vite)
+- Backend: Node.js + Express
+- Database: PostgreSQL (Neon)
+- Deployment: Vercel + Render
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Backend Repo
+https://github.com/Malvika1905/Synchire
 
-## Expanding the ESLint configuration
+## Screenshots
+### Dashboard
+![Dashboard](./screenshots/Dashboard.png)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Students
+![Students](./screenshots/Students.png)
+
+### Companies
+![Companies](./screenshots/Companies.png)
+
+### Scheduler
+![Scheduler](./screenshots/Scheduler.png)
+
+## Future Improvements
+- Authentication
+- Persistent schedule storage
+- Better UI/UX
